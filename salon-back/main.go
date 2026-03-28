@@ -66,10 +66,31 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 }
 
+func BrainTeaser() int {
+	value := 0
+
+	defer func() {
+		value = 1
+	}()
+
+	return value
+}
+
+func BrainTeaser2() []int {
+	value := []int{0}
+
+	defer func() {
+		value[0] = 1
+	}()
+	return value
+}
+
+// “When converting to/from JSON, map this field to name”, or email, or id
+
 func main() {
 	chiRouter := chi.NewRouter()
 	chiRouter.Get("/user/{id}", userDetail)
-
+	chiRouter.Post("/user", CreateUser)
 	http.Handle("/", loggingMiddleware(http.HandlerFunc(handleHome)))
 	http.Handle("/hello", loggingMiddleware(http.HandlerFunc(handleHello)))
 	http.Handle("/post/", loggingMiddleware(http.HandlerFunc(detailPost)))
@@ -89,6 +110,9 @@ func main() {
 
 		w.Write([]byte(fmt.Sprintf("The current time is %s", time.Now().Format(time.RFC1123))))
 	})
+
+	fmt.Println(BrainTeaser())
+	fmt.Println(BrainTeaser2())
 
 	http.ListenAndServe(":8080", chiRouter)
 }

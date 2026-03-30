@@ -16,10 +16,11 @@ type BaseModel struct {
 
 type User struct {
 	BaseModel
-	FullName string `json:"full_name" gorm:"not null; size:255"`
-	Username string `json:"username" gorm:"not null; size:255; unique; uniqueIndex"`
-	Email    string `json:"email" gorm:"not null; size:255; unique; uniqueIndex"`
-	Password string `json:"password" gorm:"not null; size:255"`
+	FullName string  `json:"full_name" gorm:"not null; size:255"`
+	Username string  `json:"username" gorm:"not null; size:255; unique; uniqueIndex"`
+	Email    string  `json:"email" gorm:"not null; size:255; unique; uniqueIndex"`
+	Password string  `json:"password" gorm:"not null; size:255"`
+	Orders   []Order `json:"orders" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;"`
 }
 
 type CreateUserRequest struct {

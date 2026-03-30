@@ -1,6 +1,9 @@
 package main
 
 import (
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -13,8 +16,18 @@ func initDB() {
 	if err != nil {
 		panic("failed to connect database")
 	}
+
+	// Migrate the schema
+	db.AutoMigrate(&User{})
 }
 
 func main() {
 	initDB()
+
+	userRouter := chi.NewRouter()
+	userRouter.Post("/users", CreateUser)
+	userRouter.Get("/users", GetUsers)
+	userRouter.Get("/users/{id}", GetUserById)
+
+	http.ListenAndServe(":8080", userRouter)
 }

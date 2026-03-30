@@ -8,14 +8,18 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type User struct {
+type BaseModel struct {
 	ID        uint      `gorm:"primaryKey"`
-	FullName  string    `json:"full_name" gorm:"not null; size:255"`
-	Username  string    `json:"username" gorm:"not null; size:255; unique; uniqueIndex"`
-	Email     string    `json:"email" gorm:"not null; size:255; unique; uniqueIndex"`
-	Password  string    `json:"password" gorm:"not null; size:255"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+}
+
+type User struct {
+	BaseModel
+	FullName string `json:"full_name" gorm:"not null; size:255"`
+	Username string `json:"username" gorm:"not null; size:255; unique; uniqueIndex"`
+	Email    string `json:"email" gorm:"not null; size:255; unique; uniqueIndex"`
+	Password string `json:"password" gorm:"not null; size:255"`
 }
 
 type CreateUserRequest struct {
@@ -26,10 +30,12 @@ type CreateUserRequest struct {
 }
 
 type UserResponse struct {
-	ID       uint   `json:"id"`
-	FullName string `json:"full_name"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID        uint      `json:"id"`
+	FullName  string    `json:"full_name"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (r CreateUserRequest) Validate() map[string]string {
@@ -73,10 +79,12 @@ func (r CreateUserRequest) ToModel() User {
 
 func ToUserResponse(user User) UserResponse {
 	return UserResponse{
-		ID:       user.ID,
-		FullName: user.FullName,
-		Username: user.Username,
-		Email:    user.Email,
+		ID:        user.ID,
+		FullName:  user.FullName,
+		Username:  user.Username,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
 }
 
@@ -164,4 +172,29 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(ToUserResponse(user))
+}
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	result := db.Delete(&User{}, id)
+	if result.Error != nil {
+		JSONResponse(w, http.StatusInternalServerError, APIResponse{
+			Success: false,
+			Message: "Failed to delete user",
+			Errors:  result.Error.Error(),
+		})
+		return
+	}
+	if result.RowsAffected == 0 {
+		JSONResponse(w, http.StatusNotFound, APIResponse{
+			Success: false,
+			Message: "User not found",
+		})
+		return
+	}
+	JSONResponse(w, http.StatusOK, APIResponse{
+		Success: true,
+		Message: "User deleted	successfully",
+	})
 }

@@ -1,0 +1,11 @@
+{"level":"info","ts":1774959372.8763773,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.001546196}
+{"level":"info","ts":1774959376.0209703,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.000677236}
+{"level":"info","ts":1774959376.6868272,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.000377568}
+{"level":"info","ts":1774961617.2885776,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.001528088}
+{"level":"info","ts":1774961631.039284,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.000648611}
+{"level":"info","ts":1774961696.4316792,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.002019098}
+{"level":"info","ts":1774962191.7166548,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":401,"duration":0.00005562}
+{"level":"info","ts":1774962349.7121255,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":401,"duration":0.000049672}
+{"level":"info","ts":1774962366.9847975,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":401,"duration":0.000019121}
+{"level":"info","ts":1774962376.678563,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":201,"duration":0.013845745}
+{"level":"info","ts":1774962396.5487626,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.001131978}

@@ -33,3 +33,7 @@ migrate -path migrations -database "..." down 1
 
 <!-- Learn the Following go orm -->
 sqlx or Bun > GORM
+
+<!-- fo loggin use zap it what aws cloudwatch, elk and datadog epect for monitoring -->
+
+go get go.uber.org/zap

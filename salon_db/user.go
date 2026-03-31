@@ -168,9 +168,13 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ToUserResponses(users))
-
+	// w.WriteHeader(http.StatusOK)
+	// json.NewEncoder(w).Encode(ToUserResponses(users))
+	JSONResponse(w, http.StatusOK, APIResponse{
+		Success: true,
+		Message: "Users retrieved successfully",
+		Data:    ToUserResponses(users),
+	})
 }
 
 func GetUserById(w http.ResponseWriter, r *http.Request) {

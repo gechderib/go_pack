@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -12,7 +14,8 @@ var db *gorm.DB
 
 func initDB() {
 	var err error
-	db_postgres_url := "host=localhost user=myuser password=mypass dbname=mydb port=5436"
+	// db_postgres_url := os.Getenv("DB_POSTGRES_URL")
+	db_postgres_url := LoadConfig().DBURL
 	db, err = gorm.Open(postgres.Open(db_postgres_url), &gorm.Config{})
 
 	if err != nil {
@@ -23,22 +26,72 @@ func initDB() {
 	// db.AutoMigrate(&User{}, &Order{})
 }
 
+// loadEnv loads environment variables from .env file
+func loadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
+
+}
+
+var logger *zap.Logger
+
+func initLogger() {
+	var err error
+
+	// logger, err = zap.NewProduction()
+	// if err != nil {
+	// 	panic("failed to initialize logger")
+	// }
+
+	cfg := zap.NewProductionConfig()
+	cfg.OutputPaths = []string{"logs/app.log", "stdout"}
+	logger, err = cfg.Build()
+	if err != nil {
+		panic("failed to initialize logger")
+	}
+}
+
 func main() {
+	// load environment variables
+	loadEnv()
+
+	// config
+	config := LoadConfig()
+
+	// initialize database
 	initDB()
 
-	userRouter := chi.NewRouter()
-	userRouter.Use(LoggingMiddleware, RecoveryMiddleware)
+	// initialize logger
+	initLogger()
+	defer logger.Sync()
 
-	userRouter.Post("/users", (CreateUser))
-	userRouter.Get("/users", GetUsers)
-	userRouter.Get("/users/{id}", GetUserById)
-	userRouter.Delete("/users/{id}", DeleteUser)
+	// initialize routes
+	r := chi.NewRouter()
 
-	userRouter.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
-		panic("This is a test panic")
+	// public routes
+	r.Group(func(r chi.Router) {
+		r.Use(LoggingMiddleware)
+		r.Use(RecoveryMiddleware)
+
+		r.Get("/users", GetUsers)
+		r.Get("/users/{id}", GetUserById)
 	})
 
-	userRouter.Post("/order", CreateOrder)
+	// protected routes
+	r.Group(func(r chi.Router) {
+		r.Use(LoggingMiddleware)
+		r.Use(RecoveryMiddleware)
+		r.Use(AuthMiddleware)
 
-	http.ListenAndServe(":8080", userRouter)
+		r.Post("/users", CreateUser)
+		r.Delete("/users/{id}", DeleteUser)
+		r.Post("/order", CreateOrder)
+		r.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
+			panic("This is a test panic")
+		})
+	})
+
+	http.ListenAndServe(":"+config.Port, r)
 }

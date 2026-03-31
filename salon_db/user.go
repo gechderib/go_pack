@@ -19,6 +19,7 @@ type User struct {
 	FullName string  `json:"full_name" gorm:"not null; size:255"`
 	Username string  `json:"username" gorm:"not null; size:255; unique; uniqueIndex"`
 	Email    string  `json:"email" gorm:"not null; size:255; unique; uniqueIndex"`
+	Phone    string  `json:"phone" gorm:"size:20"`
 	Password string  `json:"password" gorm:"not null; size:255"`
 	Orders   []Order `json:"orders" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;"`
 }
@@ -28,6 +29,7 @@ type CreateUserRequest struct {
 	Username *string `json:"username"`
 	Email    *string `json:"email"`
 	Password *string `json:"password"`
+	Phone    *string `json:"phone"`
 }
 
 type UserResponse struct {
@@ -35,6 +37,7 @@ type UserResponse struct {
 	FullName  string    `json:"full_name"`
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -66,6 +69,12 @@ func (r CreateUserRequest) Validate() map[string]string {
 		errors["full_name"] = "Full name cannot be empty"
 	}
 
+	if r.Phone == nil {
+		errors["phone"] = "Phone is required"
+	} else if *r.Phone == "" {
+		errors["phone"] = "Phone cannot be empty"
+	}
+
 	return errors
 }
 
@@ -74,6 +83,7 @@ func (r CreateUserRequest) ToModel() User {
 		FullName: *r.FullName,
 		Username: *r.Username,
 		Email:    *r.Email,
+		Phone:    *r.Phone,
 		Password: *r.Password,
 	}
 }
@@ -84,6 +94,7 @@ func ToUserResponse(user User) UserResponse {
 		FullName:  user.FullName,
 		Username:  user.Username,
 		Email:     user.Email,
+		Phone:     user.Phone,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}

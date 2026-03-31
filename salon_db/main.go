@@ -20,22 +20,25 @@ func initDB() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&User{}, &Order{})
+	// db.AutoMigrate(&User{}, &Order{})
 }
 
 func main() {
 	initDB()
 
 	userRouter := chi.NewRouter()
-	userRouter.Post("/users", CreateUser)
+	userRouter.Use(LoggingMiddleware, RecoveryMiddleware)
+
+	userRouter.Post("/users", (CreateUser))
 	userRouter.Get("/users", GetUsers)
 	userRouter.Get("/users/{id}", GetUserById)
 	userRouter.Delete("/users/{id}", DeleteUser)
 
+	userRouter.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
+		panic("This is a test panic")
+	})
+
 	userRouter.Post("/order", CreateOrder)
-	// userRouter.Get("/order", GetOrders)
-	// userRouter.Get("/order/{id}", GetOrderById)
-	// userRouter.Delete("/order/{id}", DeleteOrder)
 
 	http.ListenAndServe(":8080", userRouter)
 }

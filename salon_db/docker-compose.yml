@@ -14,3 +14,4 @@ services:
 volumes:
   pgdata:
 
+# paql_url: host=localhost user=myuser password=mypass dbname=mydb port=5436 sslmode=disable

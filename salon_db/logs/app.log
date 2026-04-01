@@ -9,3 +9,4 @@
 {"level":"info","ts":1774962366.9847975,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":401,"duration":0.000019121}
 {"level":"info","ts":1774962376.678563,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":201,"duration":0.013845745}
 {"level":"info","ts":1774962396.5487626,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.001131978}
+{"level":"info","ts":1774990543.0359173,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.012929043}

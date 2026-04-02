@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -90,9 +91,12 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-
 func TimeoutMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http>ResponseWriter, r * http.Request){
-		ctx, cancel := context.WithTimeout(r.context(), 3*time.Second)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
+		defer cancel()
+
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	})
 }

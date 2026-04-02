@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -93,5 +97,29 @@ func main() {
 		})
 	})
 
-	http.ListenAndServe(":"+config.Port, r)
+	// http.ListenAndServe(":"+config.PORT, r) // IGNORE -- Graceful shutdown
+
+	// Graceful shutdown
+	serve := http.Server{
+		Addr:    ":" + config.PORT,
+		Handler: r,
+	}
+
+	go func() {
+		if err := serve.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Fatal("Failed to start server", zap.Error(err))
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := serve.Shutdown(ctx); err != nil {
+		logger.Fatal("Failed to shutdown server", zap.Error(err))
+	}
+
 }

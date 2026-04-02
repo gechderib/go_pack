@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -108,11 +109,18 @@ func ToUserResponses(users []User) []UserResponse {
 	return responses
 }
 
+type Pagination struct {
+	Total int `json:"total"`
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+}
+
 type APIResponse struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
-	Errors  interface{} `json:"errors,omitempty"`
+	Success    bool        `json:"success"`
+	Message    string      `json:"message,omitempty"`
+	Data       interface{} `json:"data,omitempty"`
+	Errors     interface{} `json:"errors,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
 func JSONResponse(w http.ResponseWriter, status int, payload APIResponse) {
@@ -161,8 +169,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+
+	if pageStr == "" {
+		pageStr = "1"
+	}
+	if limitStr == "" {
+		limitStr = "10"
+	}
+
+	page, _ := strconv.Atoi(pageStr)
+	limit, _ := strconv.Atoi(limitStr)
+
+	time.Sleep(4 * time.Second) // Simulate a long-running operation
 	var users []User
-	result := db.Find(&users)
+	// result := db.Find(&users)
+	result := db.Offset((page - 1) * limit).Limit(limit).Find(&users)
 	if result.Error != nil {
 		http.Error(w, "Failed to retrieve users: "+result.Error.Error(), http.StatusInternalServerError)
 		return
@@ -174,6 +197,11 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		Success: true,
 		Message: "Users retrieved successfully",
 		Data:    ToUserResponses(users),
+		Pagination: &Pagination{
+			Total: int(result.RowsAffected),
+			Page:  page,
+			Limit: limit,
+		},
 	})
 }
 

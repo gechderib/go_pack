@@ -10,3 +10,13 @@
 {"level":"info","ts":1774962376.678563,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":201,"duration":0.013845745}
 {"level":"info","ts":1774962396.5487626,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.001131978}
 {"level":"info","ts":1774990543.0359173,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.012929043}
+{"level":"info","ts":1775128382.0862262,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.19649323}
+{"level":"info","ts":1775128452.1837502,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.001921611}
+{"level":"info","ts":1775128496.355137,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.002478894}
+{"level":"info","ts":1775130557.8762734,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.001734081}
+{"level":"info","ts":1775130563.9553766,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":0.000761927}
+{"level":"info","ts":1775130914.3274732,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":4.004722693}
+{"level":"info","ts":1775130935.019119,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":4.004852736}
+{"level":"info","ts":1775130972.970327,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":4.005139228}
+{"level":"info","ts":1775131838.3909166,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":4.003158984}
+{"level":"info","ts":1775131856.3515077,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"GET","path":"/users","status":200,"duration":4.004654236}

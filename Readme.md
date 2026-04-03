@@ -36,4 +36,28 @@ sqlx or Bun > GORM
 
 <!-- fo loggin use zap it what aws cloudwatch, elk and datadog epect for monitoring -->
 
-go get go.uber.org/zap
+go get go.uber.org/
+
+<!-- advanced go -->
+context.Context = request lifecycle controller
+
+   It handles:
+        cancellation
+        timeout
+        request-scoped values
+
+
+Situation 	               What to do
+DB query 	                    db.WithContext(ctx)
+HTTP call	                    NewRequestWithContext(ctx)
+Your own long task	          select { case <-ctx.Done() }
+Goroutines / workers	     select { case <-ctx.Done() }
+
+
+// i have loggin, recover, auth and timeout middlewares.
+// in what order	should i use them?
+// logging should be
+// 1. first to log all requests,
+// 2. then recovery to catch panics,
+// 3. then auth to check authentication and
+// 4. finally timeout to set a timeout for the request.

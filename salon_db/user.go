@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"go.uber.org/zap"
 )
 
 type BaseModel struct {
@@ -181,29 +181,32 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 	userId := ctx.Value("user_id").(string)
-	logger.Info("User ID", zap.String("user_id", userId))
-
+	fmt.Println("User ID from context:", userId)
 	page, _ := strconv.Atoi(pageStr)
 	limit, _ := strconv.Atoi(limitStr)
 
-	select {
-	case <-time.After(4 * time.Second):
-		logger.Info("Finished long-running operation")
+	// select {
+	// case <-time.After(4 * time.Second):
+	// 	fmt.Println("Finished long-running operation")
 
-	case <-ctx.Done():
-		logger.Warn("request cancelled or timed out", zap.Error(ctx.Err()))
-		JSONResponse(w, http.StatusRequestTimeout, APIResponse{
-			Success: false,
-			Message: "Request timed out",
-		})
-		return
-	} // Simulate a long-running operation
+	// case <-ctx.Done():
+	// 	JSONResponse(w, http.StatusRequestTimeout, APIResponse{
+	// 		Success: false,
+	// 		Message: "Request timed out",
+	// 	})
+	// 	return
+	// }
+	// Simulate a long-running operation
 
 	var users []User
 	// result := db.Find(&users)
 	result := db.WithContext(ctx).Offset((page - 1) * limit).Limit(limit).Find(&users)
 	if result.Error != nil {
-		http.Error(w, "Failed to retrieve users: "+result.Error.Error(), http.StatusInternalServerError)
+		JSONResponse(w, http.StatusInternalServerError, APIResponse{
+			Success: false,
+			Message: "Failed to retrieve users",
+			Errors:  result.Error.Error(),
+		})
 		return
 	}
 

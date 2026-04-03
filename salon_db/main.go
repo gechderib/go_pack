@@ -11,6 +11,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -60,6 +62,25 @@ func initLogger() {
 
 }
 
+var (
+	requestCount = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_requests_total",
+			Help: "Total number of HTTP requests",
+		},
+		[]string{"method", "path", "status"},
+	)
+
+	requestDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "http_request_duration_seconds",
+			Help:    "Request duration in seconds",
+			Buckets: prometheus.DefBuckets,
+		},
+		[]string{"method", "path"},
+	)
+)
+
 func main() {
 	// load environment variables
 	loadEnv()
@@ -82,8 +103,14 @@ func main() {
 		}
 	}()
 
+	// register Prometheus metrics
+	prometheus.MustRegister(requestCount)
+	prometheus.MustRegister(requestDuration)
+
 	// initialize routes
 	r := chi.NewRouter()
+
+	r.Handle("/metrics", promhttp.Handler())
 
 	// public routes
 	r.Group(func(r chi.Router) {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -86,7 +87,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// "Bearer token"
 		// parts := strings.Split(authHeader, " ")
 		// if len(parts) != 2 || parts[0] != "Bearer" { ... }
-
+		userId := uuid.New().String()
+		ctx := context.WithValue(r.Context(), "user_id", userId)
+		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -95,6 +98,23 @@ func TimeoutMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
 		defer cancel()
+
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
+	})
+}
+
+// cancel middleware example
+func CancelMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithCancel(r.Context())
+		defer cancel()
+
+		// Simulate some condition to cancel the request
+		go func() {
+			time.Sleep(2 * time.Second)
+			cancel()
+		}()
 
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)

@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"net/http"
+	_ "net/http/pprof"
+
 	"os"
 	"os/signal"
 	"time"
@@ -55,6 +57,7 @@ func initLogger() {
 	if err != nil {
 		panic("failed to initialize logger")
 	}
+
 }
 
 func main() {
@@ -71,6 +74,14 @@ func main() {
 	initLogger()
 	defer logger.Sync()
 
+	// for pprof testing
+	go func() {
+		logger.Info("pprof running on :6060")
+		if err := http.ListenAndServe("localhost:6060", nil); err != nil {
+			logger.Error("pprof error", zap.Error(err))
+		}
+	}()
+
 	// initialize routes
 	r := chi.NewRouter()
 
@@ -78,6 +89,8 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(LoggingMiddleware)
 		r.Use(RecoveryMiddleware)
+		r.Use(AuthMiddleware)
+		r.Use(TimeoutMiddleware)
 
 		r.Get("/users", GetUsers)
 		r.Get("/users/{id}", GetUserById)

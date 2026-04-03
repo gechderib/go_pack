@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 )
 
 type BaseModel struct {
@@ -178,21 +179,34 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	if limitStr == "" {
 		limitStr = "10"
 	}
+	ctx := r.Context()
+	userId := ctx.Value("user_id").(string)
+	logger.Info("User ID", zap.String("user_id", userId))
 
 	page, _ := strconv.Atoi(pageStr)
 	limit, _ := strconv.Atoi(limitStr)
 
-	time.Sleep(4 * time.Second) // Simulate a long-running operation
+	select {
+	case <-time.After(4 * time.Second):
+		logger.Info("Finished long-running operation")
+
+	case <-ctx.Done():
+		logger.Warn("request cancelled or timed out", zap.Error(ctx.Err()))
+		JSONResponse(w, http.StatusRequestTimeout, APIResponse{
+			Success: false,
+			Message: "Request timed out",
+		})
+		return
+	} // Simulate a long-running operation
+
 	var users []User
 	// result := db.Find(&users)
-	result := db.Offset((page - 1) * limit).Limit(limit).Find(&users)
+	result := db.WithContext(ctx).Offset((page - 1) * limit).Limit(limit).Find(&users)
 	if result.Error != nil {
 		http.Error(w, "Failed to retrieve users: "+result.Error.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// w.WriteHeader(http.StatusOK)
-	// json.NewEncoder(w).Encode(ToUserResponses(users))
 	JSONResponse(w, http.StatusOK, APIResponse{
 		Success: true,
 		Message: "Users retrieved successfully",

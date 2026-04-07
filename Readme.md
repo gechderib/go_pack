@@ -61,3 +61,28 @@ Goroutines / workers	     select { case <-ctx.Done() }
 // 2. then recovery to catch panics,
 // 3. then auth to check authentication and
 // 4. finally timeout to set a timeout for the request.
+
+
+🧭 Rule of Thumb
+If you think in events, streams, and analytics → Kafka
+If you think in tasks, jobs, and workflows → RabbitMQ
+
+
+## Create a Topic
+
+docker exec -it kafka /opt/kafka/bin/kafka-topics.sh \
+  --create \
+  --topic user-events \
+  --bootstrap-server kafka:9092 \
+  --partitions 1 \
+  --replication-factor 1
+
+
+## Consume
+
+docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --topic user-events \
+  --from-beginning \
+  --bootstrap-server kafka:9092
+
+

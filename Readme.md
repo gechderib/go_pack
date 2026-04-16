@@ -86,3 +86,8 @@ docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh \
   --bootstrap-server kafka:9092
 
 
+## Produce
+
+docker exec -it kafka /opt/kafka/bin/kafka-console-producer.sh \
+  --topic user-events \
+  --bootstrap-server kafka:9092

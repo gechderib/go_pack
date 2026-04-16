@@ -6,6 +6,12 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 )
 
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Panicf("%s: %s", msg, err)
+	}
+}
+
 func ReceiveMessage() {
 
 	// Create Connection
@@ -35,7 +41,7 @@ func ReceiveMessage() {
 	msgs, err := ch.Consume(
 		q.Name, // queue
 		"",     // consumer
-		true,   // auto-ack
+		false,  // auto-ack
 		false,  // exclusive
 		false,  // no-local
 		false,  // no-wait
@@ -47,10 +53,22 @@ func ReceiveMessage() {
 
 	go func() {
 		for d := range msgs {
+			// ack	the message after processing
+			d.Ack(false) // Ack only this one message
+			// d.Ack(true)  // Ack this and all previous unacknowledged messages
+
+			// // nack the message, requeue it for redelivery
+			// d.Nack(false, true) // Nack only this one message and requeue it
+			// d.Nack(true, true)  // Nack this and all previous unacknowledged messages and requeue them
+
 			log.Printf("Received a message: %s", d.Body)
 		}
 	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
+}
+
+func main() {
+	ReceiveMessage()
 }

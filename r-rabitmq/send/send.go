@@ -38,7 +38,9 @@ func SendMessage() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	body := "Hello World!"
+
+	randomUserID := time.Now().Unix()
+	body := "Hello World! " + string(randomUserID)
 
 	err = ch.PublishWithContext(ctx,
 		"",     // exchange
@@ -46,12 +48,17 @@ func SendMessage() {
 		false,  // mandatory
 		false,  // immediate
 		amqp091.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			DeliveryMode: amqp091.Persistent,
+			ContentType:  "text/plain",
+			Body:         []byte(body),
 		})
 
 	failOnError(err, "Failed to publish a message")
 
 	log.Printf(" [x] Sent %s", body)
 
+}
+
+func main() {
+	SendMessage()
 }

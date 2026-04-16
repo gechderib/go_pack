@@ -10,3 +10,6 @@
 {"level":"info","ts":1774962376.678563,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":201,"duration":0.013845745}
 {"level":"info","ts":1774962396.5487626,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.001131978}
 {"level":"info","ts":1774990543.0359173,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.012929043}
+{"level":"info","ts":1775076717.9986608,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.015437717}
+{"level":"info","ts":1775076751.661191,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.001264232}
+{"level":"info","ts":1775077244.574378,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":201,"duration":0.015454753}

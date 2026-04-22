@@ -6,11 +6,11 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
-}
+// func failOnError(err error, msg string) {
+// 	if err != nil {
+// 		log.Panicf("%s: %s", msg, err)
+// 	}
+// }
 
 func subscribeToMessages() {
 
@@ -78,6 +78,6 @@ func subscribeToMessages() {
 	<-forever
 }
 
-func main() {
-	subscribeToMessages()
-}
+// func main() {
+// 	subscribeToMessages()
+// }

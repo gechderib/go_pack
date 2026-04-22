@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/rabbitmq/amqp091-go"
@@ -63,16 +62,16 @@ func publishMessage() {
 	log.Printf(" [x] Sent %s", body)
 }
 
-func bodyFrom(args []string) string {
-	var s string
-	if (len(args) < 2) || os.Args[1] == "" {
-		s = "hello"
-	} else {
-		s = strings.Join(args[1:], " ")
-	}
-	return s
-}
+// func bodyFrom(args []string) string {
+// 	var s string
+// 	if (len(args) < 2) || os.Args[1] == "" {
+// 		s = "hello"
+// 	} else {
+// 		s = strings.Join(args[1:], " ")
+// 	}
+// 	return s
+// }
 
-func main() {
-	publishMessage()
-}
+// func main() {
+// 	publishMessage()
+// }

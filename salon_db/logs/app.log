@@ -60,3 +60,6 @@
 {"level":"info","ts":1775230400.2457154,"caller":"salon_db/middlware.go:87","msg":"completed request","request_id":"186794c3-8b74-4447-b94a-0df4eebb51a9","user_id":"","method":"GET","path":"/users","status":408,"duration":3.001620823}
 {"level":"info","ts":1775230441.5098648,"caller":"salon_db/main.go:100","msg":"pprof running on :6060"}
 {"level":"info","ts":1775230445.0334656,"caller":"salon_db/middlware.go:87","msg":"completed request","request_id":"6af37c9a-1837-4289-8a64-602f1a896ea6","user_id":"","method":"GET","path":"/users","status":200,"duration":0.002010253}
+{"level":"info","ts":1775076717.9986608,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.015437717}
+{"level":"info","ts":1775076751.661191,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":500,"duration":0.001264232}
+{"level":"info","ts":1775077244.574378,"caller":"salon_db/middlware.go:45","msg":"completed request","method":"POST","path":"/users","status":201,"duration":0.015454753}

@@ -8,11 +8,11 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
-}
+// func failOnError(err error, msg string) {
+// 	if err != nil {
+// 		log.Panicf("%s: %s", msg, err)
+// 	}
+// }
 
 func ReceiveMessage() {
 
@@ -84,6 +84,6 @@ func ReceiveMessage() {
 	<-forever
 }
 
-func main() {
-	ReceiveMessage()
-}
+// func main() {
+// 	ReceiveMessage()
+// }

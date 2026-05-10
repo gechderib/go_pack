@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -9,56 +10,56 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 )
 
-// func FailOnError(err error, msg string) {
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		log.Panicf("%s: %s", msg, err)
-// 	}
-// }
+func FailOnError(err error, msg string) {
+	if err != nil {
+		fmt.Println(err)
+		log.Panicf("%s: %s", msg, err)
+	}
+}
 
-func SendMessage() {
-
+// creat Connection
+func publishMessage() {
 	url := "amqp://guest:guest@localhost:5672/"
 
 	conn, err := amqp091.Dial(url)
 	FailOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
+	// create channel
 	ch, err := conn.Channel()
 	FailOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare(
-		"hello", // name
-		true,    // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+	// declare exchange
+	err = ch.ExchangeDeclare(
+		"logs",   // name
+		"fanout", // type
+		false,    // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
 	)
-	FailOnError(err, "Failed to declare a queue")
+	FailOnError(err, "Failed to declare an exchange")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// read the body from terminal
+	// publish message to exchange
 	body := bodyFrom(os.Args)
 
 	err = ch.PublishWithContext(ctx,
-		"",     // exchange
-		q.Name, // routing key
+		"logs", // exchange
+		"",     // routing key
 		false,  // mandatory
 		false,  // immediate
 		amqp091.Publishing{
-			DeliveryMode: amqp091.Persistent,
-			ContentType:  "text/plain",
-			Body:         []byte(body),
+			ContentType: "text/plain",
+			Body:        []byte(body),
 		})
-
 	FailOnError(err, "Failed to publish a message")
 
 	log.Printf(" [x] Sent %s", body)
-
 }
 
 // func bodyFrom(args []string) string {
@@ -72,5 +73,5 @@ func SendMessage() {
 // }
 
 // func main() {
-// 	SendMessage()
+// 	publishMessage()
 // }

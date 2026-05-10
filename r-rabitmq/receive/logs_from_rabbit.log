@@ -1,0 +1,6 @@
+2026/04/22 16:52:43 Binding queue amq.gen-fhiXbZSCSUiNXQJOEkvC6Q to exchange logs_direct with routing key warning
+2026/04/22 16:52:43 Binding queue amq.gen-fhiXbZSCSUiNXQJOEkvC6Q to exchange logs_direct with routing key error
+2026/04/22 16:52:43  [*] Waiting for logs. To exit press CTRL+C
+2026/04/22 16:52:55  [x] hello
+2026/04/22 16:52:56  [x] hello
+2026/04/22 16:53:01  [x] wow
